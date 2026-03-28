@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Video Downloader</title>
+
+<style>
+body {
+    background-color: #000;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: Arial;
+    color: white;
+}
+
+.app-card {
+    background: #111;
+    padding: 40px;
+    border-radius: 30px;
+    border: 2px solid red;
+    text-align: center;
+}
+
+input {
+    padding: 15px;
+    width: 300px;
+    border-radius: 10px;
+    border: none;
+}
+
+button {
+    padding: 15px;
+    margin-top: 15px;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#progress {
+    margin-top: 20px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="app-card">
+    <h2>Social Media Video Downloader</h2>
+
+    <input id="url" placeholder="Paste video link">
+    <br>
+    <button onclick="startDownload()">DOWNLOAD</button>
+
+    <div id="progress"></div>
+    <div id="result"></div>
+</div>
+
+<script>
+async function startDownload() {
+    let url = document.getElementById("url").value;
+
+    if(!url){
+        alert("Paste link first");
+        return;
+    }
+
+    document.getElementById("progress").innerHTML = "Processing...";
+
+    let formData = new URLSearchParams();
+    formData.append("url", url);
+
+    try {
+        let res = await fetch('/download', {
+            method: "POST",
+            body: formData
+        });
+
+        let data = await res.json();
+
+        if(data.success){
+            document.getElementById("progress").innerHTML = "Download Ready!";
+
+            document.getElementById("result").innerHTML = `
+                <h3>${data.title}</h3>
+                <img src="${data.thumbnail}" width="200"><br><br>
+                <a href="${data.file}">
+                    <button>Download File</button>
+                </a>
+            `;
+        } else {
+            alert(data.message);
+        }
+
+    } catch(err){
+        alert("Server error");
+    }
+}
+</script>
+
+</body>
+</html>
