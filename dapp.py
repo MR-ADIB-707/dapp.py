@@ -124,7 +124,7 @@ async function startDownload() {
 
 @app.route('/')
 def home():
-    return render_template_string(HTML_CODE)
+    return render_template('index.html')
 
 @app.route('/download', methods=['POST'])
 def download_video():
